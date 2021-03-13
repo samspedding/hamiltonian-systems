@@ -1,0 +1,257 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "import matplotlib.pyplot as plt\n",
+    "from scipy.integrate import solve_ivp\n",
+    "import math\n",
+    "from scipy import optimize\n",
+    "\n",
+    "import matplotlib as mpl\n",
+    "from matplotlib import cm\n",
+    "mpl.rcParams['mathtext.fontset'] = 'cm'\n",
+    "mpl.rcParams['mathtext.rm'] = 'serif'\n",
+    "\n",
+    "import turning_point as tp\n",
+    "import gezeltermiller_hamiltonian as gm\n",
+    "\n",
+    "import os\n",
+    "path_to_data = 'data/'\n",
+    "path_to_saveplot = 'plots/'"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#%% Setting up parameters and global variables\n",
+    "\n",
+    "save_final_plot = True\n",
+    "show_final_plot = False\n",
+    "show_itrsteps_plots = False # show iteration of the UPOs in plots\n",
+    "N = 4         # dimension of phase space\n",
+    "\n",
+    "masses = [16, 1]\n",
+    "params_pe = [\n",
+    "    1.0074e-2,  # k\n",
+    "    1.9769e0,   # d\n",
+    "    -2.3597e-3, # a2\n",
+    "    1.0408e-3,  # a4\n",
+    "    -7.5496e-5, # a6\n",
+    "    7.7569e-3,  # c\n",
+    "    -2.45182e-4 # d0\n",
+    "            ]\n",
+    "\n",
+    "parameters = masses + params_pe\n",
+    "eqNum = 1\n",
+    "eqPt = tp.get_eq_pts(eqNum, gm.init_guess_eqpt_gm, \\\n",
+    "                    gm.grad_pot_gm, parameters)\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([-2.80469162,  1.50600739])"
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "eqPt"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "h is  -0.0\n",
+      "Initial guess1[-3.3384251199919714, 1.51, 0.0, 0.0], initial guess2[-3.3384251199920185, 1.51, 0, 0], dot product is0.00012785450729364538\n",
+      "h is  -0.0050000000000000044\n",
+      "Initial guess1[-3.3384251199919714, 1.51, 0.0, 0.0], initial guess2[-3.326679249905633, 1.505, 0, 0], dot product is0.00012258406529502656\n",
+      "h is  -0.010000000000000009\n",
+      "Initial guess1[-3.3384251199919714, 1.51, 0.0, 0.0], initial guess2[-3.3148277926241008, 1.5, 0, 0], dot product is0.00011636157928449599\n",
+      "h is  -0.015000000000000013\n",
+      "Initial guess1[-3.3384251199919714, 1.51, 0.0, 0.0], initial guess2[-3.302883627484259, 1.495, 0, 0], dot product is0.00011130949348140967\n",
+      "h is  -0.020000000000000018\n",
+      "Initial guess1[-3.3384251199919714, 1.51, 0.0, 0.0], initial guess2[-3.290861668572854, 1.49, 0, 0], dot product is0.00010635707867898855\n"
+     ]
+    },
+    {
+     "ename": "UnboundLocalError",
+     "evalue": "local variable 'check_same' referenced before assignment",
+     "output_type": "error",
+     "traceback": [
+      "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
+      "\u001b[0;31mUnboundLocalError\u001b[0m                         Traceback (most recent call last)",
+      "\u001b[0;32m<ipython-input-4-b86da10f7f76>\u001b[0m in \u001b[0;36m<module>\u001b[0;34m\u001b[0m\n\u001b[1;32m     29\u001b[0m             \u001b[0mgm\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mhalf_period_gm\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mgm\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mvariational_eqns_gm\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mgm\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mpot_energy_gm\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0;31m \u001b[0m\u001b[0;31m\\\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m     30\u001b[0m             \u001b[0mgm\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mplot_iter_orbit_gm\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m---> 31\u001b[0;31m             parameters, e, n, n_turn, show_itrsteps_plots, po_fam_file) \n\u001b[0m",
+      "\u001b[0;32m~/Desktop/summer_project/code/gezelter_miller/UPOsHam/turning_point.py\u001b[0m in \u001b[0;36mturningPoint\u001b[0;34m(begin1, begin2, TSPAN, get_coord_model, guess_coords_model, ham2dof_model, half_period_model, variational_eqns_model, pot_energy_model, plot_iter_orbit_model, par, e, n, n_turn, show_itrsteps_plots, po_fam_file)\u001b[0m\n\u001b[1;32m    397\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    398\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m--> 399\u001b[0;31m         \u001b[0;32mif\u001b[0m \u001b[0mcheck_same\u001b[0m \u001b[0;34m==\u001b[0m \u001b[0mi_turn\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0miter\u001b[0m\u001b[0;34m]\u001b[0m \u001b[0;32mand\u001b[0m \u001b[0mcheck_diff\u001b[0m \u001b[0;34m==\u001b[0m \u001b[0;34m-\u001b[0m\u001b[0mn\u001b[0m\u001b[0;34m+\u001b[0m\u001b[0mi_turn\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0miter\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m-\u001b[0m\u001b[0;36m1\u001b[0m \u001b[0;32mand\u001b[0m \u001b[0mi_turn_iter\u001b[0m\u001b[0;34m>\u001b[0m\u001b[0;36m0\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m    400\u001b[0m             \u001b[0;31m# if the follwing condition holds, we can zoom in to a smaller interval and continue our procedure\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    401\u001b[0m             \u001b[0mindex\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0mint\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mi_turn\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0miter\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+      "\u001b[0;31mUnboundLocalError\u001b[0m: local variable 'check_same' referenced before assignment"
+     ]
+    }
+   ],
+   "source": [
+    "#%% \n",
+    "#E_vals = [1.1, 2.00, 3.00, 5.00]\n",
+    "#linecolor = ['b','r','g','m','c']\n",
+    "E_vals = [0.01, 0.02]\n",
+    "linecolor = ['b','r']\n",
+    "\n",
+    "n = 4 # number of intervals we want to divide\n",
+    "n_turn = 1 # nth turning point we want to choose.\n",
+    "    \n",
+    "for i in range(len(E_vals)):\n",
+    "    \n",
+    "    e = E_vals[i] # total energy\n",
+    "        \n",
+    "    #Trial initial Condition s.t. one initial condition is on the LHS of the UPO and the \n",
+    "    #other one is on the RHS of the UPO\n",
+    "\n",
+    "    f1 = lambda x: gm.get_coord_gm(x,1.51,e,parameters)\n",
+    "    x0_2 = optimize.newton(f1,-3)\n",
+    "    state0_2 = [x0_2,1.51,0.0,0.0]\n",
+    "\n",
+    "    f2 = lambda x: gm.get_coord_gm(x,1.49,e,parameters)\n",
+    "    x0_3 = optimize.newton(f2,-3)\n",
+    "    state0_3 = [x0_3,1.49,0.0,0.0]\n",
+    "    \n",
+    "    with open(\"x0_turningpoint_e%s_gm.dat\"%(e),'a+') as po_fam_file:\n",
+    "    \n",
+    "        [x0po_1, T_1,energyPO_1] = tp.turningPoint( \n",
+    "            state0_2, state0_3, [0, 200], gm.get_coord_gm, gm.guess_coords_gm, gm.ham2dof_gm, \\\n",
+    "            gm.half_period_gm, gm.variational_eqns_gm, gm.pot_energy_gm, \\\n",
+    "            gm.plot_iter_orbit_gm, \n",
+    "            parameters, e, n, n_turn, show_itrsteps_plots, po_fam_file) "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#%% Load periodic orbit data from ascii files\n",
+    "    \n",
+    "x0po = np.zeros((4,len(E_vals))) #each column is a different initial condition\n",
+    "\n",
+    "for i in range(len(E_vals)):\n",
+    "    \n",
+    "    e = E_vals[i]\n",
+    "    deltaE = e - parameters[2]\n",
+    "\n",
+    "    with open(\"x0_turningpoint_deltaE%s_deleonberne.dat\"%(deltaE),'a+') as po_fam_file:\n",
+    "        print('Loading the periodic orbit family from data file',po_fam_file.name,'\\n') \n",
+    "        x0podata = np.loadtxt(po_fam_file.name)\n",
+    "        x0po[:,i] = x0podata[-1,0:4] "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#%% Plotting the family\n",
+    "\n",
+    "TSPAN = [0,30]\n",
+    "plt.close('all')\n",
+    "axis_fs = 15\n",
+    "RelTol = 3.e-10\n",
+    "AbsTol = 1.e-10\n",
+    "\n",
+    "f = lambda t,x : deleonberne.ham2dof_deleonberne(t,x,parameters) \n",
+    "\n",
+    "ax = plt.gca(projection='3d')\n",
+    "\n",
+    "for i in range(len(E_vals)):\n",
+    "    \n",
+    "    e = E_vals[i]\n",
+    "    deltaE = e - parameters[2]\n",
+    "    \n",
+    "    soln = solve_ivp(f, TSPAN, x0po[:,i], method='RK45', dense_output=True, \\\n",
+    "                    events = lambda t,x : deleonberne.half_period_deleonberne(t,x,parameters), \\\n",
+    "                    rtol=RelTol, atol=AbsTol)\n",
+    "    \n",
+    "    te = soln.t_events[0]\n",
+    "    tt = [0,te[2]]\n",
+    "    t,x,phi_t1,PHI = tp.state_transit_matrix(tt, x0po[:,i], parameters, \\\n",
+    "                                        deleonberne.variational_eqns_deleonberne)\n",
+    "    \n",
+    "    ax.plot(x[:,0],x[:,1],x[:,2],'-',color=linecolor[i], \\\n",
+    "            label='$\\Delta E$ = %.2f'%(deltaE))\n",
+    "    ax.scatter(x[0,0],x[0,1],x[0,2],s=10,marker='*')\n",
+    "    ax.plot(x[:,0], x[:,1], zs=0, zdir='z')\n",
+    "\n",
+    "    \n",
+    "resX = 100\n",
+    "xVec = np.linspace(-1,1,resX)\n",
+    "yVec = np.linspace(-2,2,resX)\n",
+    "xMat, yMat = np.meshgrid(xVec, yVec)\n",
+    "cset1 = ax.contour(xMat, yMat, tp.get_pot_surf_proj(xVec, yVec, \\\n",
+    "                    deleonberne.pot_energy_deleonberne, parameters), \\\n",
+    "                    [0.01,0.1,1,2,4], zdir='z', offset=0, \\\n",
+    "                    linewidths = 1.0, cmap=cm.viridis, \\\n",
+    "                    alpha = 0.8)\n",
+    "\n",
+    "ax.scatter(eqPt[0], eqPt[1], s = 50, c = 'r', marker = 'X')\n",
+    "ax.set_xlabel('$x$', fontsize=axis_fs)\n",
+    "ax.set_ylabel('$y$', fontsize=axis_fs)\n",
+    "ax.set_zlabel('$p_x$', fontsize=axis_fs)\n",
+    "\n",
+    "ax.set_xlim(-1.5, 1.5)\n",
+    "ax.set_ylim(-1.5, 1.5)\n",
+    "ax.set_zlim(-4, 4)\n",
+    "legend = ax.legend(loc='upper left')\n",
+    "\n",
+    "plt.grid()\n",
+    "\n",
+    "if show_final_plot:\n",
+    "    plt.show()\n",
+    "\n",
+    "if save_final_plot:  \n",
+    "    plt.savefig(path_to_saveplot + 'tp_deleonberne_upos.pdf', \\\n",
+    "                format='pdf', bbox_inches='tight')\n"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.7.6"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}
